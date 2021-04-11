@@ -2,6 +2,19 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Virtual Machine"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "SKU size for Virtual Machine eg. Standard_F4s_v2 or Standard_NV6s_v2"
+            },
+            "defaultValue": "Standard_F4s_v2"
+        },
         "adminUsername": {
             "type": "string",
             "metadata": {
@@ -14,19 +27,19 @@
                 "description": "Password for the Virtual Machine."
             }
         },
-        "existingVNetResourceGroup": {
+        "existingVnetResourceGroup": {
             "type": "string",
             "metadata": {
                 "description": ""
             }
         },
-        "existingVNetName": {
+        "existingVnetName": {
             "type": "string",
             "metadata": {
                 "description": ""
             }
         },
-        "existVNetSubnet": {
+        "existingVnetSubnet": {
             "type": "string",
             "metadata": {
                 "description": ""
@@ -52,15 +65,8 @@
         }
     },
     "variables": {
-        "nicName": "[concat(uniquestring(resourceGroup().id), 'myVMNic')]",
-        "addressPrefix": "10.0.0.0/16",
-        "subnetName": "Subnet",
-        "subnetPrefix": "10.0.0.0/24",
-        "publicIPAddressName": "[concat(uniquestring(resourceGroup().id), 'myPublicIP')]",
-        "vmName": "[concat(uniquestring(resourceGroup().id), 'myVMFromGalleryImageVersion')]",
-        "virtualNetworkName": "MyVNET",
-        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
-        "networkSecurityGroupName": "[concat(variables('subnetName'), '-nsg')]"
+        "subnetRef": "[resourceId(parameters('existingVNetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('existingVnetName'),parameters('existingVNetSubnet'))]",
+        "nicName": "[concat(parameters('vmName'),'-nic')]"
     },
     "resources": [
         {
@@ -74,7 +80,6 @@
                         "name": "ipconfig1",
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
-                            "publicIPAddress": {},
                             "subnet": {
                                 "id": "[variables('subnetRef')]"
                             }
@@ -82,21 +87,19 @@
                     }
                 ]
             },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
-            ]
+            "dependsOn": []
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('vmName')]",
+            "name": "[parameters('vmName')]",
             "apiVersion": "2018-04-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "Standard_A1"
+                    "vmSize": "[parameters('vmSize')]"
                 },
                 "osProfile": {
-                    "computerName": "[variables('vmName')]",
+                    "computerName": "[parameters('vmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
