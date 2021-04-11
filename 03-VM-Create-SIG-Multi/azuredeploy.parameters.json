@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "value": "nyVMName"
+    },
+    "vmSize": {
+      "value": "Standard_F4s_v2"
+    },
+    "numberOfVms": {
+      "value": 2
+    },
+    "adminUsername": {
+      "value": "GEN-UNIQUE"
+    },
+    "adminPassword": {
+      "value": "GEN-PASSWORD"
+    },
+    "existingVnetResourceGroup": {
+      "value": "myVNetRGName"
+    },
+    "existingVnetName": {
+      "value": "myVNetName"
+    },
+    "existingVnetSubnet": {
+      "value": "myVNetSubnetName"
+    },
+    "galleryName": {
+      "value": "myGallery"
+    },
+    "galleryImageDefinitionName": {
+      "value": "myGalleryImageDefinition"
+    },
+    "galleryImageVersionName": {
+      "value": "myGalleryImageVersion"
+    }
+  }
+}
